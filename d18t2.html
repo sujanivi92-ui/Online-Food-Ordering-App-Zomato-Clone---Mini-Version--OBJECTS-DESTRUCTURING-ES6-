@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zomato Clone - Online Food Ordering</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(to right, #e23744, #cb202d);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        .cart-icon {
+            position: relative;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ffd700;
+            color: #333;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .app-container {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .menu-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .cart-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .category-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .category-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .category-tab.active {
+            border-bottom: 3px solid #cb202d;
+            color: #cb202d;
+            font-weight: 600;
+        }
+        
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .menu-item {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .item-image {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .item-details {
+            padding: 15px;
+        }
+        
+        .item-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .item-price {
+            color: #cb202d;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .item-category {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .add-to-cart {
+            background: #cb202d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background: #e23744;
+        }
+        
+        .cart-items {
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-details {
+            flex-grow: 1;
+        }
+        
+        .cart-item-name {
+            font-weight: 600;
+        }
+        
+        .cart-item-price {
+            color: #cb202d;
+            font-weight: 600;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-btn {
+            background: #f0f0f0;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .quantity {
+            margin: 0 10px;
+            font-weight: 600;
+        }
+        
+        .remove-item {
+            color: #999;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .cart-total {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: right;
+            margin: 20px 0;
+            color: #333;
+        }
+        
+        .checkout-form {
+            margin-top: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .checkout-btn {
+            background: #cb202d;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        .checkout-btn:hover {
+            background: #e23744;
+        }
+        
+        .order-summary {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .order-summary h3 {
+            color: #cb202d;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .order-details {
+            margin-bottom: 15px;
+        }
+        
+        .bill-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .bill-total {
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .customer-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-section {
+                position: static;
+            }
+            
+            .menu-items {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-utensils"></i> Zomato Clone
+                </div>
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="app-container">
+            <div class="menu-section">
+                <h2>Our Menu</h2>
+                
+                <div class="category-tabs">
+                    <div class="category-tab active" data-category="all">All</div>
+                    <div class="category-tab" data-category="main course">Main Course</div>
+                    <div class="category-tab" data-category="appetizer">Appetizers</div>
+                    <div class="category-tab" data-category="dessert">Desserts</div>
+                    <div class="category-tab" data-category="beverage">Beverages</div>
+                </div>
+                
+                <div class="menu-items" id="menuItems">
+                    <!-- Menu items will be dynamically generated here -->
+                </div>
+            </div>
+            
+            <div class="cart-section">
+                <h2>Your Cart</h2>
+                
+                <div class="cart-items" id="cartItems">
+                    <div class="empty-cart">Your cart is empty</div>
+                </div>
+                
+                <div class="cart-total" id="cartTotal">Total: $0.00</div>
+                
+                <div class="checkout-form">
+                    <h3>Customer Details</h3>
+                    <div class="form-group">
+                        <label for="customerName">Name *</label>
+                        <input type="text" id="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Phone *</label>
+                        <input type="text" id="customerPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerEmail">Email</label>
+                        <input type="email" id="customerEmail">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerAddress">Delivery Address *</label>
+                        <input type="text" id="customerAddress" required>
+                    </div>
+                    
+                    <button class="checkout-btn" id="checkoutBtn">Place Order</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="order-summary" id="orderSummary">
+            <!-- Order summary will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Menu items stored as objects
+        const menuItems = [
+            {
+                id: 1,
+                name: "Margherita Pizza",
+                price: 12.99,
+                category: "main course",
+                image: "pizza.jpg"
+            },
+            {
+                id: 2,
+                name: "Chicken Burger",
+                price: 9.99,
+                category: "main course",
+                image: "burger.jpg"
+            },
+            {
+                id: 3,
+                name: "Caesar Salad",
+                price: 8.99,
+                category: "main course",
+                image: "salad.jpg"
+            },
+            {
+                id: 4,
+                name: "Garlic Bread",
+                price: 4.99,
+                category: "appetizer",
+                image: "garlic-bread.jpg"
+            },
+            {
+                id: 5,
+                name: "Mozzarella Sticks",
+                price: 6.99,
+                category: "appetizer",
+                image: "mozzarella-sticks.jpg"
+            },
+            {
+                id: 6,
+                name: "Chocolate Cake",
+                price: 5.99,
+                category: "dessert",
+                image: "chocolate-cake.jpg"
+            },
+            {
+                id: 7,
+                name: "Ice Cream Sundae",
+                price: 4.99,
+                category: "dessert",
+                image: "ice-cream.jpg"
+            },
+            {
+                id: 8,
+                name: "Coca Cola",
+                price: 2.49,
+                category: "beverage",
+                image: "coke.jpg"
+            },
+            {
+                id: 9,
+                name: "Fresh Orange Juice",
+                price: 3.99,
+                category: "beverage",
+                image: "juice.jpg"
+            },
+            {
+                id: 10,
+                name: "Pasta Alfredo",
+                price: 11.99,
+                category: "main course",
+                image: "pasta.jpg"
+            }
+        ];
+
+        // Cart array to store items
+        let cart = [];
+
+        // DOM elements
+        const menuItemsContainer = document.getElementById('menuItems');
+        const cartItemsContainer = document.getElementById('cartItems');
+        const cartTotalElement = document.getElementById('cartTotal');
+        const cartCountElement = document.querySelector('.cart-count');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const orderSummary = document.getElementById('orderSummary');
+        const categoryTabs = document.querySelectorAll('.category-tab');
+
+        // Display menu items using object destructuring
+        function displayMenuItems(category = 'all') {
+            menuItemsContainer.innerHTML = '';
+            
+            const filteredItems = category === 'all' 
+                ? menuItems 
+                : menuItems.filter(item => item.category === category);
+            
+            filteredItems.forEach(item => {
+                // Object destructuring to extract name and price
+                const { name, price, category, image } = item;
+                
+                const menuItemElement = document.createElement('div');
+                menuItemElement.className = 'menu-item';
+                menuItemElement.innerHTML = `
+                    <div class="item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?${name.split(' ').join(',')}')"></div>
+                    <div class="item-details">
+                        <div class="item-name">${name}</div>
+                        <div class="item-price">$${price.toFixed(2)}</div>
+                        <div class="item-category">${category}</div>
+                        <button class="add-to-cart" data-id="${item.id}">Add to Cart</button>
+                    </div>
+                `;
+                
+                menuItemsContainer.appendChild(menuItemElement);
+            });
+            
+            // Add event listeners to Add to Cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = parseInt(e.target.getAttribute('data-id'));
+                    addToCart(itemId);
+                });
+            });
+        }
+
+        // Add item to cart using spread operator
+        function addToCart(itemId) {
+            const itemToAdd = menuItems.find(item => item.id === itemId);
+            
+            if (itemToAdd) {
+                // Check if item already exists in cart
+                const existingItemIndex = cart.findIndex(item => item.id === itemId);
+                
+                if (existingItemIndex !== -1) {
+                    // Item exists, increase quantity
+                    cart[existingItemIndex].quantity += 1;
+                } else {
+                    // Item doesn't exist, add new item using spread operator
+                    cart = [...cart, { ...itemToAdd, quantity: 1 }];
+                }
+                
+                updateCartDisplay();
+                showNotification(`${itemToAdd.name} added to cart!`);
+            }
+        }
+
+        // Remove item from cart
+        function removeFromCart(itemId) {
+            cart = cart.filter(item => item.id !== itemId);
+            updateCartDisplay();
+        }
+
+        // Update quantity of item in cart
+        function updateQuantity(itemId, change) {
+            const itemIndex = cart.findIndex(item => item.id === itemId);
+            
+            if (itemIndex !== -1) {
+                cart[itemIndex].quantity += change;
+                
+                if (cart[itemIndex].quantity <= 0) {
+                    removeFromCart(itemId);
+                } else {
+                    updateCartDisplay();
+                }
+            }
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+                cartTotalElement.textContent = 'Total: $0.00';
+                cartCountElement.textContent = '0';
+                return;
+            }
+            
+            cart.forEach(item => {
+                // Object destructuring to extract name and price
+                const { name, price, quantity } = item;
+                
+                const cartItemElement = document.createElement('div');
+                cartItemElement.className = 'cart-item';
+                cartItemElement.innerHTML = `
+                    <div class="cart-item-details">
+                        <div class="cart-item-name">${name}</div>
+                        <div class="cart-item-price">$${price.toFixed(2)}</div>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                        <span class="quantity">${quantity}</span>
+                        <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                        <span class="remove-item" data-id="${item.id}"><i class="fas fa-trash"></i></span>
+                    </div>
+                `;
+                
+                cartItemsContainer.appendChild(cartItemElement);
+            });
+            
+            // Calculate total using rest parameter
+            const total = calculateBill(...cart);
+            cartTotalElement.textContent = `Total: $${total.toFixed(2)}`;
+            cartCountElement.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            // Add event listeners to quantity buttons
+            document.querySelectorAll('.quantity-btn.minus').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = parseInt(e.target.getAttribute('data-id'));
+                    updateQuantity(itemId, -1);
+                });
+            });
+            
+            document.querySelectorAll('.quantity-btn.plus').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = parseInt(e.target.getAttribute('data-id'));
+                    updateQuantity(itemId, 1);
+                });
+            });
+            
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = parseInt(e.target.closest('.remove-item').getAttribute('data-id'));
+                    removeFromCart(itemId);
+                });
+            });
+        }
+
+        // Calculate bill using rest parameter
+        function calculateBill(...items) {
+            return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+        }
+
+        // Show order summary using template literals
+        function showOrderSummary(customer) {
+            // Using optional chaining to handle missing customer details
+            const email = customer?.email || 'Not provided';
+            const phone = customer?.phone || 'Not provided';
+            
+            orderSummary.innerHTML = `
+                <h3>Order Confirmed!</h3>
+                <div class="order-details">
+                    <h4>Order Details:</h4>
+                    ${cart.map(item => `
+                        <div class="bill-item">
+                            <span>${item.name} x${item.quantity}</span>
+                            <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                    <div class="bill-item bill-total">
+                        <span>Total</span>
+                        <span>$${calculateBill(...cart).toFixed(2)}</span>
+                    </div>
+                </div>
+                <div class="customer-info">
+                    <h4>Customer Information:</h4>
+                    <p><strong>Name:</strong> ${customer.name}</p>
+                    <p><strong>Phone:</strong> ${phone}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Address:</strong> ${customer.address}</p>
+                </div>
+                <p style="margin-top: 15px; text-align: center; font-style: italic;">
+                    Thank you for your order! Your food will be delivered in 30-45 minutes.
+                </p>
+            `;
+            
+            orderSummary.style.display = 'block';
+            orderSummary.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #2ecc71;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 5px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                z-index: 1000;
+                transition: opacity 0.3s;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 2000);
+        }
+
+        // Event listeners
+        checkoutBtn.addEventListener('click', () => {
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+            const email = document.getElementById('customerEmail').value;
+            const address = document.getElementById('customerAddress').value;
+            
+            if (!name || !phone || !address) {
+                alert('Please fill in all required fields (Name, Phone, and Address)');
+                return;
+            }
+            
+            if (cart.length === 0) {
+                alert('Your cart is empty. Please add items before checking out.');
+                return;
+            }
+            
+            // Create customer object
+            const customer = {
+                name,
+                phone,
+                email: email || undefined, // Will be handled with optional chaining
+                address
+            };
+            
+            showOrderSummary(customer);
+            
+            // Reset cart and form
+            cart = [];
+            updateCartDisplay();
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('customerEmail').value = '';
+            document.getElementById('customerAddress').value = '';
+        });
+
+        // Category tab event listeners
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                displayMenuItems(tab.getAttribute('data-category'));
+            });
+        });
+
+        // Initialize the app
+        displayMenuItems();
+    </script>
+</body>
+</html>
